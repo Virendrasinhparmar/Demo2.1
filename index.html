@@ -159,7 +159,7 @@
             text-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 
-        /* --- REALISTIC GLASS CARD (ACRYLIC STYLE) --- */
+        /* --- REALISTIC GLASS CARD --- */
         .glass-card {
             background: var(--glass-bg);
             backdrop-filter: blur(16px) saturate(180%);
@@ -177,6 +177,20 @@
         .glass-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 20px 50px -10px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+        }
+
+        /* NEW: Glass Form Container (Fixes Grey Box Issue) */
+        .glass-form {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 32rem;
+            margin: 2rem auto;
+            transition: background 0.8s ease, border 0.8s ease;
         }
 
         /* Ornamental Corners */
@@ -271,20 +285,85 @@
             text-shadow: 0 0 10px rgba(214, 179, 122, 0.4);
         }
 
-        /* --- TIMELINE (ADVANCED FEATURE) --- */
-        .timeline-connector {
-            position: absolute;
-            left: 50%;
-            top: 100px;
-            bottom: 100px;
-            width: 1px;
-            background: linear-gradient(to bottom, transparent, var(--accent-gold), transparent);
-            transform: translateX(-50%);
-            z-index: 5;
-            opacity: 0.6;
+        /* --- TIMELINE (CENTERED SPLIT) --- */
+        .day-timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 0;
         }
-        @media (max-width: 768px) {
-            .timeline-connector { display: none; }
+        /* Central Line */
+        .day-timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 1px;
+            background: var(--accent-gold);
+            transform: translateX(-50%);
+        }
+        .day-event {
+            position: relative;
+            width: 50%;
+            padding: 0 30px;
+            box-sizing: border-box;
+            margin-bottom: 40px;
+        }
+        /* Left Side (Odd) */
+        .day-event:nth-child(odd) {
+            left: 0;
+            text-align: right;
+        }
+        /* Dot on Left item (positioned right) */
+        .day-event:nth-child(odd)::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            right: -6px;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            border: 2px solid var(--bg-body);
+            z-index: 10;
+        }
+        /* Right Side (Even) */
+        .day-event:nth-child(even) {
+            left: 50%;
+            text-align: left;
+        }
+        /* Dot on Right item (positioned left) */
+        .day-event:nth-child(even)::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: -6px;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            border: 2px solid var(--bg-body);
+            z-index: 10;
+        }
+        
+        .time-badge {
+            display: inline-block;
+            background: var(--accent-gold);
+            color: #fff;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        /* Mobile Optimization for Split Timeline */
+        @media (max-width: 640px) {
+            .day-event { padding: 0 15px; }
+            .time-badge { font-size: 0.65rem; padding: 2px 8px; }
+            .day-event h4 { font-size: 1rem; line-height: 1.2; }
+            .day-event p { font-size: 0.7rem; line-height: 1.3; }
         }
 
         /* --- GALLERY --- */
@@ -320,41 +399,57 @@
             margin-top: 5px;
         }
 
-        /* --- FAQ Accordion --- */
-        details {
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 1rem;
-            transition: all 0.3s;
+        /* --- VIRTUAL HALDI --- */
+        .haldi-area {
+            position: relative;
+            cursor: crosshair;
+            overflow: hidden;
         }
-        details[open] {
-            padding-bottom: 1.5rem;
+        .haldi-splash {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #ffcc00 0%, #ff9933 70%, transparent 100%);
+            border-radius: 50% 40% 60% 30% / 30% 60% 40% 50%;
+            transform: scale(0);
+            pointer-events: none;
+            animation: splashAppear 0.4s forwards ease-out;
+            opacity: 0.8;
+            filter: blur(2px);
         }
-        summary {
-            cursor: pointer;
-            list-style: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.25rem;
-            color: var(--text-main);
+        @keyframes splashAppear {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: scale(1.5) rotate(45deg); opacity: 0.8; }
         }
-        summary::-webkit-details-marker { display: none; }
-        summary::after {
-            content: '+';
-            font-size: 1.5rem;
-            font-weight: 300;
-            color: var(--accent-gold);
-            transition: transform 0.3s;
+
+        /* --- BLESSINGS MARQUEE & FORM --- */
+        .wishes-container {
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            padding: 2rem 0;
         }
-        details[open] summary::after { transform: rotate(45deg); }
-        .faq-content {
-            margin-top: 1rem;
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-            padding-right: 1rem;
+        .wishes-track {
+            display: inline-block;
+            animation: marquee 30s linear infinite;
+        }
+        .wish-card {
+            display: inline-block;
+            width: 300px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            margin: 0 15px;
+            border-radius: 8px;
+            border: 1px solid var(--accent-gold);
+            white-space: normal;
+            vertical-align: top;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
         /* --- RSVP PETALS --- */
@@ -378,9 +473,13 @@
             outline: none; transition: all 0.3s;
             border-radius: 0;
         }
+        .custom-input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.8;
+        }
         .custom-select {
             cursor: pointer;
-            color: var(--text-muted); /* Placeholder feel */
+            color: var(--text-muted);
         }
         .custom-select option {
             background-color: var(--bg-body);
@@ -472,12 +571,92 @@
             100% { transform: rotate(-45deg) scale(1.1); opacity: 1; }
         }
 
+        /* --- ADMIN DASHBOARD --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: var(--bg-body);
+            color: var(--text-main);
+            width: 90%; max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid var(--accent-gold);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .admin-stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .admin-table th, .admin-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        .admin-table th { background: rgba(214, 179, 122, 0.2); }
+        
+        /* Mobile Admin Cards */
+        @media (max-width: 640px) {
+            .admin-table thead { display: none; }
+            .admin-table, .admin-table tbody, .admin-table tr, .admin-table td { display: block; width: 100%; }
+            .admin-table tr { margin-bottom: 15px; border: 1px solid var(--glass-border); padding: 10px; border-radius: 8px; }
+            .admin-table td { text-align: right; padding-left: 50%; position: relative; border-bottom: none; }
+            .admin-table td::before { 
+                content: attr(data-label); 
+                position: absolute; left: 10px; font-weight: bold; text-align: left;
+            }
+        }
+
     </style>
+    
+    <!-- FIREBASE SDKs -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+        import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+
+        // Firebase Config
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Sign in anonymously immediately
+        signInAnonymously(auth).catch((error) => console.error("Auth Error:", error));
+
+        // --- GLOBAL EXPORTS FOR HTML FUNCTIONS ---
+        window.db = db;
+        window.appId = appId;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.query = query;
+        window.orderBy = orderBy;
+        window.onSnapshot = onSnapshot; // for realtime updates
+    </script>
 </head>
 <body class="day-theme">
 
     <div class="ui-controls">
-        <div class="control-btn" id="langBtn" onclick="toggleLanguage()" title="Toggle Language (English/Hindi)">
+        <div class="control-btn" id="langBtn" onclick="toggleLanguage()" title="Toggle Language">
             <span class="text-xs font-serif font-bold">En</span>
         </div>
         <div class="control-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Theme">
@@ -494,7 +673,7 @@
     <a href="#rsvp" class="sticky-rsvp">RSVP Now <i class="fas fa-arrow-right ml-1"></i></a>
 
     <audio id="bgMusic" loop>
-        <source src="Indian 1.wav" type="audio/mpeg">
+        <source src="/Indian 1.wav" type="audio/mpeg">
     </audio>
 
     <!-- HERO SECTION -->
@@ -716,8 +895,68 @@
         </div>
     </section>
 
-    <!-- TRAVEL & CONCIERGE -->
+    <!-- VIRTUAL HALDI INTERACTION -->
+    <section class="py-16 bg-theme-body">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h3 class="text-2xl font-serif text-theme-main mb-2 gold-text" data-translate="virtual_haldi_title">Virtual Haldi</h3>
+            <p class="text-theme-muted text-sm mb-8" data-translate="virtual_haldi_desc">Tap the photo to apply Haldi and bless the couple!</p>
+            
+            <div class="relative inline-block rounded-lg overflow-hidden shadow-2xl cursor-pointer group" onclick="applyHaldi(event)">
+                <div class="haldi-area">
+                    <img src="Haldi.jpg" alt="Apply Haldi" class="max-h-[400px] w-auto object-cover transition duration-500 group-hover:scale-105">
+                    <div id="haldiLayer" class="absolute inset-0 pointer-events-none"></div>
+                </div>
+                <div class="absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-bold text-[#d6b37a] shadow-lg pointer-events-none">
+                    <i class="fas fa-hand-sparkles mr-2"></i> Tap to Bless
+                </div>
+            </div>
+            
+            <button onclick="resetHaldi()" class="block mx-auto mt-6 text-xs uppercase tracking-widest text-theme-muted hover:text-theme-main transition">
+                <i class="fas fa-redo mr-1"></i> Reset
+            </button>
+        </div>
+    </section>
+
+    <!-- BIG DAY TIMELINE (ITINERARY) -->
     <section class="py-16 bg-theme-gradient">
+        <div class="max-w-2xl mx-auto px-6 fade-up">
+            <div class="text-center mb-12">
+                <span class="text-theme-muted text-xs md:text-sm uppercase tracking-[0.2em]" data-translate="timeline_subtitle">Dec 12th</span>
+                <h2 class="text-3xl md:text-5xl mt-2 text-theme-main gold-text" data-translate="timeline_title">The Big Day</h2>
+            </div>
+
+            <div class="day-timeline">
+                <div class="day-event fade-up">
+                    <span class="time-badge">10:00 AM</span>
+                    <h4 class="text-xl font-serif text-theme-main">Safa Bandhai</h4>
+                    <p class="text-sm text-theme-muted font-light">Tying of the ceremonial turbans for the groom's side.</p>
+                </div>
+                <div class="day-event fade-up delay-100">
+                    <span class="time-badge">11:30 AM</span>
+                    <h4 class="text-xl font-serif text-theme-main">Baraat Assembly</h4>
+                    <p class="text-sm text-theme-muted font-light">The groom's grand procession begins at the Main Gate.</p>
+                </div>
+                <div class="day-event fade-up delay-200">
+                    <span class="time-badge">12:30 PM</span>
+                    <h4 class="text-xl font-serif text-theme-main">Milni & Varmala</h4>
+                    <p class="text-sm text-theme-muted font-light">Welcoming of families and exchange of garlands.</p>
+                </div>
+                <div class="day-event fade-up delay-300">
+                    <span class="time-badge">01:30 PM</span>
+                    <h4 class="text-xl font-serif text-theme-main">Pheras</h4>
+                    <p class="text-sm text-theme-muted font-light">The sacred wedding ceremony around the holy fire.</p>
+                </div>
+                <div class="day-event fade-up">
+                    <span class="time-badge">03:00 PM</span>
+                    <h4 class="text-xl font-serif text-theme-main">Grand Lunch</h4>
+                    <p class="text-sm text-theme-muted font-light">A royal feast to celebrate the newlyweds.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRAVEL & CONCIERGE -->
+    <section class="py-16 bg-theme-body">
         <div class="max-w-6xl mx-auto px-4">
              <div class="text-center mb-12 fade-up">
                 <span class="text-theme-muted text-xs md:text-sm uppercase tracking-[0.2em]" data-translate="travel_subtitle">Travel Guide</span>
@@ -780,41 +1019,6 @@
         </div>
     </section>
 
-    <!-- FAQ SECTION (GUEST INFORMATION) -->
-    <section class="py-16 md:py-24 px-4 bg-theme-body">
-        <div class="max-w-2xl mx-auto fade-up">
-            <div class="text-center mb-12">
-                <span class="text-theme-muted text-xs md:text-sm uppercase tracking-[0.2em]" data-translate="faq_subtitle">Information</span>
-                <h2 class="text-3xl md:text-5xl mt-2 text-theme-main gold-text" data-translate="faq_title">Guest Guide</h2>
-            </div>
-
-            <details class="group">
-                <summary data-translate="faq_q1">Is there a dress code?</summary>
-                <div class="faq-content" data-translate="faq_a1">
-                    Yes, we have suggested dress codes for each event. Haldi is yellow/bright, Sangeet is glamorous Indo-Western, and the Wedding is traditional Indian wear.
-                </div>
-            </details>
-            <details class="group">
-                <summary data-translate="faq_q2">Are children invited?</summary>
-                <div class="faq-content" data-translate="faq_a2">
-                    We love your little ones! However, for the wedding ceremony itself, we request a quiet environment. We have arranged a play area with nannies at the venue.
-                </div>
-            </details>
-            <details class="group">
-                <summary data-translate="faq_q3">Will there be Jain food?</summary>
-                <div class="faq-content" data-translate="faq_a3">
-                    Absolutely. All our catering includes a dedicated Jain counter and extensive vegetarian options. Please specify in your RSVP.
-                </div>
-            </details>
-            <details class="group">
-                <summary data-translate="faq_q4">Weather in Udaipur?</summary>
-                <div class="faq-content" data-translate="faq_a4">
-                    December in Udaipur is pleasant during the day (25°C) but can get chilly at night (10°C). We recommend bringing a light shawl or jacket for evening events.
-                </div>
-            </details>
-        </div>
-    </section>
-
     <!-- GALLERY -->
     <section class="py-16 md:py-24 px-4">
         <div class="max-w-7xl mx-auto">
@@ -828,6 +1032,81 @@
                 <div class="gallery-item fade-up delay-200"><img src="Haldi.jpg" alt="Hands"></div>
                 <div class="gallery-item fade-up"><img src="/4.jpg" alt="Wedding"></div>
                 <div class="gallery-item fade-up delay-100"><img src="ring.jpg" alt="Love"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BLESSINGS & WISHES SECTION -->
+    <section class="py-16 bg-[#f2dede]/30 relative" id="blessings">
+        <div class="max-w-4xl mx-auto px-4 text-center mb-12 fade-up">
+            <span class="text-theme-muted text-xs md:text-sm uppercase tracking-[0.2em]" data-translate="blessings_subtitle">Your Love</span>
+            <h2 class="text-3xl md:text-5xl mt-2 text-theme-main gold-text" data-translate="wishes_title">Blessings</h2>
+            
+            <!-- Blessing Input Form (UPDATED CLASS: glass-form) -->
+            <div class="glass-form">
+                <form onsubmit="submitBlessing(event)" class="space-y-4">
+                    <input type="text" id="blessingName" placeholder="Your Name" class="custom-input" required>
+                    <textarea id="blessingMsg" placeholder="Write your blessing here..." class="custom-input h-20 resize-none" required></textarea>
+                    <button type="submit" class="bg-[#d6b37a] text-[#3b2c2c] px-8 py-2 rounded-sm text-sm font-bold uppercase tracking-wider hover:bg-[#3b2c2c] hover:text-[#d6b37a] transition-all">
+                        Send Blessing
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="wishes-container">
+            <div class="wishes-track" id="wishesTrack">
+                <!-- Static Wishes populated below -->
+                <div class="wish-card">
+                    <p class="text-theme-main font-serif italic text-lg">"Wishing you a lifetime of love and happiness!"</p>
+                    <p class="text-xs text-theme-muted mt-2 uppercase tracking-wide">- The Kapoors</p>
+                </div>
+                <div class="wish-card">
+                    <p class="text-theme-main font-serif italic text-lg">"May your love grow stronger each and every day."</p>
+                    <p class="text-xs text-theme-muted mt-2 uppercase tracking-wide">- Aunt Meera</p>
+                </div>
+                <div class="wish-card">
+                    <p class="text-theme-main font-serif italic text-lg">"So excited to celebrate with you both in Udaipur!"</p>
+                    <p class="text-xs text-theme-muted mt-2 uppercase tracking-wide">- Rahul & Priya</p>
+                </div>
+                <div class="wish-card">
+                    <p class="text-theme-main font-serif italic text-lg">"Can't wait to see you guys tie the knot!"</p>
+                    <p class="text-xs text-theme-muted mt-2 uppercase tracking-wide">- Sameer</p>
+                </div>
+                <div class="wish-card">
+                    <p class="text-theme-main font-serif italic text-lg">"Congratulations to the beautiful couple!"</p>
+                    <p class="text-xs text-theme-muted mt-2 uppercase tracking-wide">- The Singh Family</p>
+                </div>
+                <div class="wish-card">
+                    <p class="text-theme-main font-serif italic text-lg">"Wishing you endless joy and love."</p>
+                    <p class="text-xs text-theme-muted mt-2 uppercase tracking-wide">- Ananya & Vikram</p>
+                </div>
+                <div class="wish-card">
+                    <p class="text-theme-main font-serif italic text-lg">"Here's to a lifetime of adventures together."</p>
+                    <p class="text-xs text-theme-muted mt-2 uppercase tracking-wide">- The Gupta Family</p>
+                </div>
+                <div class="wish-card">
+                    <p class="text-theme-main font-serif italic text-lg">"Blessings on your new journey."</p>
+                    <p class="text-xs text-theme-muted mt-2 uppercase tracking-wide">- Grandma & Grandpa</p>
+                </div>
+                
+                <!-- Duplicates for scrolling effect -->
+                <div class="wish-card">
+                    <p class="text-theme-main font-serif italic text-lg">"Wishing you a lifetime of love and happiness!"</p>
+                    <p class="text-xs text-theme-muted mt-2 uppercase tracking-wide">- The Kapoors</p>
+                </div>
+                <div class="wish-card">
+                    <p class="text-theme-main font-serif italic text-lg">"May your love grow stronger each and every day."</p>
+                    <p class="text-xs text-theme-muted mt-2 uppercase tracking-wide">- Aunt Meera</p>
+                </div>
+                <div class="wish-card">
+                    <p class="text-theme-main font-serif italic text-lg">"So excited to celebrate with you both in Udaipur!"</p>
+                    <p class="text-xs text-theme-muted mt-2 uppercase tracking-wide">- Rahul & Priya</p>
+                </div>
+                <div class="wish-card">
+                    <p class="text-theme-main font-serif italic text-lg">"Can't wait to see you guys tie the knot!"</p>
+                    <p class="text-xs text-theme-muted mt-2 uppercase tracking-wide">- Sameer</p>
+                </div>
             </div>
         </div>
     </section>
@@ -846,27 +1125,25 @@
             <p class="text-theme-muted mb-8 md:mb-12 font-light text-sm md:text-base" data-translate="rsvp_subtitle">We would be honored to have you with us.</p>
 
             <form id="rsvpForm" class="space-y-6 md:space-y-8 text-left" onsubmit="handleRSVP(event)">
-                <input type="text" placeholder="Full Name" class="custom-input" required>
+                <input type="text" id="rsvpName" placeholder="Full Name" class="custom-input" required>
                 
-                <!-- Attendance -->
                 <div class="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center py-2 md:py-4">
                     <label class="flex items-center gap-2 cursor-pointer text-theme-main">
-                        <input type="radio" name="attendance" class="accent-[#d6b37a]" checked>
+                        <input type="radio" name="attendance" value="attending" class="accent-[#d6b37a]" checked>
                         <span class="font-serif text-lg" data-translate="attending_yes">Joyfully Attending</span>
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer text-theme-main">
-                        <input type="radio" name="attendance" class="accent-[#d6b37a]">
+                        <input type="radio" name="attendance" value="declined" class="accent-[#d6b37a]">
                         <span class="font-serif text-lg" data-translate="attending_no">Regretfully Decline</span>
                     </label>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <input type="number" placeholder="Number of Guests" class="custom-input" min="1" max="10">
-                    <input type="text" placeholder="Arrival Date (e.g. 10th Dec)" class="custom-input">
+                    <input type="number" id="rsvpGuests" placeholder="Number of Guests" class="custom-input" min="1" max="10">
+                    <input type="text" id="rsvpArrival" placeholder="Arrival Date (e.g. 10th Dec)" class="custom-input">
                 </div>
 
-                <!-- Dietary Preferences -->
-                <select class="custom-select">
+                <select id="rsvpDiet" class="custom-select">
                     <option value="" disabled selected>Dietary Preferences</option>
                     <option value="veg">Vegetarian</option>
                     <option value="jain">Jain (No Onion/Garlic)</option>
@@ -874,7 +1151,7 @@
                     <option value="vegan">Vegan</option>
                 </select>
 
-                <input type="text" placeholder="Message for the couple" class="custom-input">
+                <input type="text" id="rsvpMsg" placeholder="Message for the couple" class="custom-input">
                 
                 <div class="text-center mt-8 md:mt-12">
                     <button type="submit" class="rsvp-btn px-12 py-3 rounded-sm font-serif text-lg tracking-wider" data-translate="send_rsvp">
@@ -895,9 +1172,87 @@
             <div class="flame"></div>
         </div>
         <div id="countdown" class="flex justify-center items-center gap-4 mb-6"></div>
-        <p class="font-serif italic text-lg opacity-80" data-translate="footer_love">With love and blessings</p>
+        
+        <!-- ADMIN LOCK ICON -->
+        <div class="mt-8 cursor-pointer opacity-30 hover:opacity-100 transition" onclick="openAdminModal()">
+            <i class="fas fa-lock"></i>
+        </div>
+        
+        <p class="font-serif italic text-lg opacity-80 mt-4" data-translate="footer_love">With love and blessings</p>
         <p class="text-xs uppercase tracking-widest mt-4 opacity-40">Designed for the couple</p>
     </footer>
+
+    <!-- ADMIN MODAL -->
+    <div id="adminModal" class="modal-overlay">
+        <div class="modal-content text-center">
+            <h2 class="text-2xl font-serif mb-4">Bride & Groom Access</h2>
+            <input type="password" id="adminPass" placeholder="Enter Password" class="custom-input mb-4 text-center">
+            <button onclick="loginAdmin()" class="bg-[#d6b37a] text-[#3b2c2c] px-6 py-2 rounded-sm">Login</button>
+            <p id="loginError" class="text-red-500 text-sm mt-2 hidden">Incorrect Password</p>
+            <button onclick="closeAdminModal()" class="mt-4 text-sm underline text-theme-muted">Close</button>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD (Hidden by default) -->
+    <div id="adminDashboard" class="modal-overlay">
+        <div class="modal-content relative w-full h-full max-h-screen">
+            <button onclick="closeDashboard()" class="absolute top-4 right-4 text-2xl"><i class="fas fa-times"></i></button>
+            
+            <h2 class="text-3xl font-serif gold-text mb-8 text-center">Wedding Planner Dashboard</h2>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="admin-stat-card">
+                    <h3 class="text-2xl font-bold" id="totalGuests">0</h3>
+                    <p class="text-xs uppercase">Total Guests</p>
+                </div>
+                <div class="admin-stat-card">
+                    <h3 class="text-2xl font-bold" id="totalRSVP">0</h3>
+                    <p class="text-xs uppercase">RSVPs Received</p>
+                </div>
+                <div class="admin-stat-card">
+                    <h3 class="text-2xl font-bold" id="vegCount">0</h3>
+                    <p class="text-xs uppercase">Vegetarian</p>
+                </div>
+                <div class="admin-stat-card">
+                    <h3 class="text-2xl font-bold" id="jainCount">0</h3>
+                    <p class="text-xs uppercase">Jain Meals</p>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex border-b border-gray-300 mb-6">
+                <button class="px-6 py-2 border-b-2 border-[#d6b37a] font-bold" onclick="showTab('rsvps')">RSVPs</button>
+                <button class="px-6 py-2 text-theme-muted" onclick="showTab('blessings')">Blessings</button>
+            </div>
+
+            <!-- RSVP List -->
+            <div id="rsvpTab">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Guests</th>
+                            <th>Diet</th>
+                            <th>Arrival</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rsvpTableBody">
+                        <!-- Populated via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Blessings List -->
+            <div id="blessingTab" class="hidden">
+                <div id="blessingList" class="grid gap-4">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         // TRANSLATION DATA
@@ -943,7 +1298,8 @@
                 open_map: "Open Location Map",
                 memories_subtitle: "Memories",
                 gallery_title: "Captured Moments",
-                wishes_title: "Love Notes",
+                wishes_title: "Blessings",
+                blessings_subtitle: "Your Love",
                 rsvp_title: "Kindly confirm your presence",
                 rsvp_subtitle: "We would be honored to have you with us.",
                 attending_yes: "Joyfully Attending",
@@ -953,16 +1309,10 @@
                 footer_love: "With love and blessings",
                 song_request_title: "On The Dance Floor",
                 song_request_subtitle: "Help us build the perfect Sangeet playlist!",
-                faq_subtitle: "Information",
-                faq_title: "Guest Guide",
-                faq_q1: "Is there a dress code?",
-                faq_a1: "Yes, we have suggested dress codes for each event. Haldi is yellow/bright, Sangeet is glamorous Indo-Western, and the Wedding is traditional Indian wear.",
-                faq_q2: "Are children invited?",
-                faq_a2: "We love your little ones! However, for the wedding ceremony itself, we request a quiet environment. We have arranged a play area with nannies at the venue.",
-                faq_q3: "Will there be Jain food?",
-                faq_a3: "Absolutely. All our catering includes a dedicated Jain counter and extensive vegetarian options. Please specify in your RSVP.",
-                faq_q4: "Weather in Udaipur?",
-                faq_a4: "December in Udaipur is pleasant during the day (25°C) but can get chilly at night (10°C). We recommend bringing a light shawl or jacket for evening events."
+                virtual_haldi_title: "Virtual Haldi",
+                virtual_haldi_desc: "Tap the photo to apply Haldi and bless the couple!",
+                timeline_subtitle: "Dec 12th",
+                timeline_title: "The Big Day"
             },
             hi: {
                 hero_invite: "अपने परिवारों के साथ आपको अपने विवाह उत्सव में आमंत्रित करते हैं",
@@ -1006,6 +1356,7 @@
                 memories_subtitle: "यादें",
                 gallery_title: "सुनहरे पल",
                 wishes_title: "शुभकामनाएं",
+                blessings_subtitle: "आपका स्नेह",
                 rsvp_title: "कृपया अपनी उपस्थिति की पुष्टि करें",
                 rsvp_subtitle: "आपकी उपस्थिति हमारे लिए सम्मान की बात होगी।",
                 attending_yes: "खुशी से उपस्थित रहेंगे",
@@ -1015,16 +1366,10 @@
                 footer_love: "प्यार और आशीर्वाद के साथ",
                 song_request_title: "डांस फ्लोर पर",
                 song_request_subtitle: "संगीत के लिए अपने पसंदीदा गाने सुझाएं!",
-                faq_subtitle: "जानकारी",
-                faq_title: "अतिथि गाइड",
-                faq_q1: "क्या कोई ड्रेस कोड है?",
-                faq_a1: "हाँ, हमने प्रत्येक कार्यक्रम के लिए सुझाव दिए हैं। हल्दी के लिए पीला, संगीत के लिए इंडो-वेस्टर्न, और शादी के लिए पारंपरिक परिधान।",
-                faq_q2: "क्या बच्चे आमंत्रित हैं?",
-                faq_a2: "हमें बच्चे बहुत पसंद हैं! हालाँकि, शादी के समारोह के लिए हम शांत वातावरण चाहते हैं। हमने स्थल पर नैनी के साथ खेलने की जगह की व्यवस्था की है।",
-                faq_q3: "क्या जैन भोजन उपलब्ध होगा?",
-                faq_a3: "बिल्कुल। हमारी कैटरिंग में एक समर्पित जैन काउंटर और शाकाहारी विकल्प शामिल हैं। कृपया अपने आरएसवीपी में उल्लेख करें।",
-                faq_q4: "उदयपुर का मौसम?",
-                faq_a4: "दिसंबर में उदयपुर में दिन सुहावने (२५°C) होते हैं लेकिन रात में ठंड (१०°C) हो सकती है। हम शाम के कार्यक्रमों के लिए शॉल या जैकेट लाने की सलाह देते हैं।"
+                virtual_haldi_title: "वर्चुअल हल्दी",
+                virtual_haldi_desc: "हल्दी लगाने और आशीर्वाद देने के लिए फोटो पर टैप करें!",
+                timeline_subtitle: "१२ दिसंबर",
+                timeline_title: "विवाह का दिन"
             }
         };
 
@@ -1041,6 +1386,9 @@
             startCountdown();
             checkPersonalization();
             checkScrollForSticky();
+            
+            // Load Blessings for Marquee
+            loadPublicBlessings();
 
             const toran = document.querySelector('.toran-container');
             if(window.innerWidth > 768 && toran) {
@@ -1048,6 +1396,124 @@
             }
         });
 
+        // --- PUBLIC DATA LOADING ---
+        async function loadPublicBlessings() {
+            try {
+                if(!window.db) return;
+                const q = window.query(window.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'blessings'), window.orderBy('timestamp', 'desc'));
+                window.onSnapshot(q, (snapshot) => {
+                    const track = document.getElementById('wishesTrack');
+                    // Keep initial static one or clear it? Let's clear and re-add static + dynamic
+                    // For demo, just prepend dynamic ones
+                    snapshot.docChanges().forEach((change) => {
+                        if (change.type === "added") {
+                            const data = change.doc.data();
+                            const cardHTML = `
+                                <div class="wish-card">
+                                    <p class="text-theme-main font-serif italic text-lg">"${data.message}"</p>
+                                    <p class="text-xs text-theme-muted mt-2 uppercase tracking-wide">- ${data.name}</p>
+                                </div>
+                            `;
+                            track.insertAdjacentHTML('afterbegin', cardHTML);
+                        }
+                    });
+                }, (error) => console.log("Error loading blessings:", error));
+            } catch(e) { console.error(e); }
+        }
+
+        // --- ADMIN FUNCTIONS ---
+        function openAdminModal() {
+            document.getElementById('adminModal').style.display = 'flex';
+        }
+        function closeAdminModal() {
+            document.getElementById('adminModal').style.display = 'none';
+        }
+        
+        function loginAdmin() {
+            const pass = document.getElementById('adminPass').value;
+            if (pass === '121226') {
+                closeAdminModal();
+                openDashboard();
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        }
+
+        function openDashboard() {
+            document.getElementById('adminDashboard').style.display = 'flex';
+            loadAdminData();
+        }
+        function closeDashboard() {
+            document.getElementById('adminDashboard').style.display = 'none';
+        }
+
+        function showTab(tabName) {
+            if (tabName === 'rsvps') {
+                document.getElementById('rsvpTab').classList.remove('hidden');
+                document.getElementById('blessingTab').classList.add('hidden');
+            } else {
+                document.getElementById('rsvpTab').classList.add('hidden');
+                document.getElementById('blessingTab').classList.remove('hidden');
+            }
+        }
+
+        async function loadAdminData() {
+            if(!window.db) return;
+            
+            // Fetch RSVPs
+            const rsvpRef = window.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'rsvps');
+            const rsvpSnapshot = await window.getDocs(rsvpRef);
+            
+            let totalGuests = 0;
+            let totalRSVP = 0;
+            let veg = 0;
+            let jain = 0;
+            let tbody = document.getElementById('rsvpTableBody');
+            tbody.innerHTML = '';
+
+            rsvpSnapshot.forEach(doc => {
+                const data = doc.data();
+                totalRSVP++;
+                const guests = parseInt(data.guests || 0);
+                totalGuests += guests;
+                
+                if (data.diet === 'veg' || data.diet === 'vegan') veg += guests;
+                if (data.diet === 'jain') jain += guests;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td data-label="Name" class="font-bold">${data.name}</td>
+                    <td data-label="Status">${data.attendance === 'attending' ? '<span class="text-green-600">Attending</span>' : '<span class="text-red-500">Declined</span>'}</td>
+                    <td data-label="Guests">${data.guests}</td>
+                    <td data-label="Diet">${data.diet || '-'}</td>
+                    <td data-label="Arrival">${data.arrival || '-'}</td>
+                    <td data-label="Message" class="text-xs italic">${data.message || ''}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('totalGuests').innerText = totalGuests;
+            document.getElementById('totalRSVP').innerText = totalRSVP;
+            document.getElementById('vegCount').innerText = veg;
+            document.getElementById('jainCount').innerText = jain;
+
+            // Fetch Blessings
+            const blessingRef = window.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'blessings');
+            const blessingSnapshot = await window.getDocs(blessingRef);
+            const blessingList = document.getElementById('blessingList');
+            blessingList.innerHTML = '';
+            
+            blessingSnapshot.forEach(doc => {
+                const data = doc.data();
+                const div = document.createElement('div');
+                div.className = 'bg-white/50 p-4 rounded border border-gray-200';
+                div.innerHTML = `<p class="font-bold text-sm">${data.name}</p><p class="italic">"${data.message}"</p>`;
+                blessingList.appendChild(div);
+            });
+        }
+
+        // --- STANDARD FUNCTIONS ---
+        
         function checkScrollForSticky() {
             window.addEventListener('scroll', () => {
                 const rsvpSection = document.getElementById('rsvp');
@@ -1055,7 +1521,6 @@
                 const heroHeight = window.innerHeight;
                 const rsvpPosition = rsvpSection.getBoundingClientRect().top;
 
-                // Show after hero, hide when RSVP section is visible
                 if (window.scrollY > heroHeight && rsvpPosition > window.innerHeight) {
                     stickyBtn.classList.add('visible');
                 } else {
@@ -1117,16 +1582,39 @@
             }
         }
 
-        function handleRSVP(e) {
+        async function handleRSVP(e) {
             e.preventDefault();
             const btn = e.target.querySelector('button');
-            const msg = currentLang === 'en' ? "Sent with Love" : "प्यार के साथ भेजा गया";
-            btn.innerText = msg;
+            const originalText = btn.innerText;
+            btn.innerText = "Sending...";
             btn.disabled = true;
-            for(let i = 0; i < 30; i++) setTimeout(createPetal, i * 100);
-            
-            const alertMsg = currentLang === 'en' ? "Thank you for your RSVP!" : "आपकी प्रतिक्रिया के लिए धन्यवाद!";
-            setTimeout(() => alert(alertMsg), 1000);
+
+            const formData = {
+                name: document.getElementById('rsvpName').value,
+                attendance: document.querySelector('input[name="attendance"]:checked').value,
+                guests: document.getElementById('rsvpGuests').value,
+                arrival: document.getElementById('rsvpArrival').value,
+                diet: document.getElementById('rsvpDiet').value,
+                message: document.getElementById('rsvpMsg').value,
+                timestamp: new Date()
+            };
+
+            try {
+                if(window.addDoc && window.db) {
+                    await window.addDoc(window.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'rsvps'), formData);
+                }
+                
+                const msg = currentLang === 'en' ? "Sent with Love" : "प्यार के साथ भेजा गया";
+                btn.innerText = msg;
+                for(let i = 0; i < 30; i++) setTimeout(createPetal, i * 100);
+                const alertMsg = currentLang === 'en' ? "Thank you for your RSVP!" : "आपकी प्रतिक्रिया के लिए धन्यवाद!";
+                setTimeout(() => alert(alertMsg), 1000);
+            } catch (error) {
+                console.error("Error submitting RSVP: ", error);
+                alert("There was an error. Please try again.");
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
         }
 
         function handleSongRequest(e) {
@@ -1136,6 +1624,50 @@
             input.value = "Added! Thank you.";
             btn.classList.add('opacity-50');
             setTimeout(() => { input.value = ""; btn.classList.remove('opacity-50'); }, 2000);
+        }
+
+        function applyHaldi(event) {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            const splash = document.createElement('div');
+            splash.classList.add('haldi-splash');
+            const randomRot = Math.random() * 360;
+            const randomScale = 0.8 + Math.random() * 0.7;
+            
+            splash.style.left = (x - 25) + 'px';
+            splash.style.top = (y - 25) + 'px';
+            splash.style.transform = `scale(${randomScale}) rotate(${randomRot}deg)`;
+            
+            document.getElementById('haldiLayer').appendChild(splash);
+        }
+
+        function resetHaldi() {
+            document.getElementById('haldiLayer').innerHTML = '';
+        }
+
+        async function submitBlessing(e) {
+            e.preventDefault();
+            const name = document.getElementById('blessingName').value;
+            const msg = document.getElementById('blessingMsg').value;
+            
+            const data = {
+                name: name,
+                message: msg,
+                timestamp: new Date()
+            };
+
+            try {
+                if(window.addDoc && window.db) {
+                    await window.addDoc(window.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'blessings'), data);
+                }
+                e.target.reset();
+                const alertMsg = currentLang === 'en' ? "Thank you for your blessing!" : "आपके आशीर्वाद के लिए धन्यवाद!";
+                alert(alertMsg);
+            } catch (error) {
+                console.error("Error adding blessing: ", error);
+            }
         }
 
         function createPetal() {
